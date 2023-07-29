@@ -1,4 +1,4 @@
-package com.example.mediaserver;
+package com.leka.mediaserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
