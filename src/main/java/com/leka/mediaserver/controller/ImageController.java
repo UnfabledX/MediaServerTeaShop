@@ -44,7 +44,7 @@ public class ImageController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ImageDtoResponse updateImage(@PathVariable("id") Long id,
+    public ImageDtoResponse updateImage(@PathVariable(name = "id", required = false) Long id,
                                         @RequestParam("file") MultipartFile file){
         return imageService.updateImage(id, file);
     }

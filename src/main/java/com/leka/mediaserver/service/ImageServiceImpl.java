@@ -48,10 +48,12 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageDtoResponse updateImage(Long idOfUpdatedImage, MultipartFile file) {
         Image image = Image.builder()
-                .id(idOfUpdatedImage)
                 .fileName(file.getOriginalFilename())
                 .fileType(file.getContentType())
                 .size(file.getSize()).build();
+        if (idOfUpdatedImage > 0) {
+            image.setId(idOfUpdatedImage);
+        }
         return getImageDtoResponse(file, image);
     }
 
