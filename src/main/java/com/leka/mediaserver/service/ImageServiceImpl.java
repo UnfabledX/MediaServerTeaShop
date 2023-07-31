@@ -5,26 +5,58 @@ import com.leka.mediaserver.entity.dto.ImageDtoResponse;
 import com.leka.mediaserver.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
 
     @Override
     public ImageDtoResponse save(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        String fileType = file.getContentType();
-        Long size = file.getSize();
         Image image = Image.builder()
-                .fileName(fileName)
-                .fileType(fileType)
-                .size(size).build();
+                .fileName(file.getOriginalFilename())
+                .fileType(file.getContentType())
+                .size(file.getSize()).build();
+        return getImageDtoResponse(file, image);
+    }
+
+    @Override
+    public void delete(Long id) {
+        imageRepository.deleteById(id);
+    }
+
+    @Override
+    public ImageDtoResponse getImage(Long id) {
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Image is not found"));
+        return ImageDtoResponse.builder()
+                .id(image.getId())
+                .fileName(image.getFileName())
+                .fileType(image.getFileType())
+                .size(image.getSize())
+                .createdDate(image.getCreatedDate())
+                .updatedDate(image.getUpdatedDate())
+                .data(image.getData()).build();
+    }
+
+    @Override
+    public ImageDtoResponse updateImage(Long idOfUpdatedImage, MultipartFile file) {
+        Image image = Image.builder()
+                .id(idOfUpdatedImage)
+                .fileName(file.getOriginalFilename())
+                .fileType(file.getContentType())
+                .size(file.getSize()).build();
+        return getImageDtoResponse(file, image);
+    }
+
+
+    private ImageDtoResponse getImageDtoResponse(MultipartFile file, Image image) {
         try {
             image.setData(file.getBytes());
         } catch (IOException ex) {
@@ -32,11 +64,12 @@ public class ImageServiceImpl implements ImageService {
         }
         imageRepository.save(image);
         return ImageDtoResponse.builder()
-                .fileName(fileName)
-                .fileType(fileType)
-                .size(size)
-                .createdDate(LocalDateTime.now())
-                .updatedDate(LocalDateTime.now())
+                .id(image.getId())
+                .fileName(image.getFileName())
+                .fileType(image.getFileType())
+                .size(image.getSize())
+                .createdDate(image.getCreatedDate())
+                .updatedDate(image.getUpdatedDate())
                 .build();
     }
 }

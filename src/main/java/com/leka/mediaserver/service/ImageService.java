@@ -7,4 +7,9 @@ public interface ImageService {
 
     ImageDtoResponse save(MultipartFile file);
 
+    void delete(Long id);
+
+    ImageDtoResponse getImage(Long id);
+
+    ImageDtoResponse updateImage(Long id, MultipartFile file);
 }
