@@ -2,8 +2,11 @@ package com.leka.mediaserver.service;
 
 import com.leka.mediaserver.entity.Image;
 import com.leka.mediaserver.entity.dto.ImageDtoResponse;
+import com.leka.mediaserver.mapper.ImageMapperImpl;
 import com.leka.mediaserver.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,7 @@ import java.io.IOException;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+    private final ImageMapperImpl imageMapper;
 
     @Override
     public ImageDtoResponse save(MultipartFile file) {
@@ -23,7 +27,7 @@ public class ImageServiceImpl implements ImageService {
                 .fileName(file.getOriginalFilename())
                 .fileType(file.getContentType())
                 .size(file.getSize()).build();
-        return getImageDtoResponse(file, image);
+        return saveImageAndGetDtoResponse(file, image);
     }
 
     @Override
@@ -32,17 +36,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageDtoResponse getImage(Long id) {
+    public ImageDtoResponse getImage(Long id, Boolean withData) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Image is not found"));
-        return ImageDtoResponse.builder()
-                .id(image.getId())
-                .fileName(image.getFileName())
-                .fileType(image.getFileType())
-                .size(image.getSize())
-                .createdDate(image.getCreatedDate())
-                .updatedDate(image.getUpdatedDate())
-                .data(image.getData()).build();
+        return withData ?
+                imageMapper.convertImageToImageDtoWithData(image) :
+                imageMapper.convertImageToImageDtoWithoutData(image);
     }
 
     @Override
@@ -50,28 +49,29 @@ public class ImageServiceImpl implements ImageService {
         Image image = Image.builder()
                 .fileName(file.getOriginalFilename())
                 .fileType(file.getContentType())
-                .size(file.getSize()).build();
+                .size(file.getSize())
+                .build();
         if (idOfUpdatedImage > 0) {
             image.setId(idOfUpdatedImage);
+            image.setCreatedDate(getImage(idOfUpdatedImage, false).getCreatedDate());
         }
-        return getImageDtoResponse(file, image);
+        return saveImageAndGetDtoResponse(file, image);
+    }
+
+    @Override
+    public Page<ImageDtoResponse> getAllImages(Pageable pageable) {
+        Page<Image> images = imageRepository.findAll(pageable);
+        return images.map(imageMapper::convertImageToImageDtoWithData);
     }
 
 
-    private ImageDtoResponse getImageDtoResponse(MultipartFile file, Image image) {
+    private ImageDtoResponse saveImageAndGetDtoResponse(MultipartFile file, Image image) {
         try {
             image.setData(file.getBytes());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         imageRepository.save(image);
-        return ImageDtoResponse.builder()
-                .id(image.getId())
-                .fileName(image.getFileName())
-                .fileType(image.getFileType())
-                .size(image.getSize())
-                .createdDate(image.getCreatedDate())
-                .updatedDate(image.getUpdatedDate())
-                .build();
+        return imageMapper.convertImageToImageDtoWithoutData(image);
     }
 }

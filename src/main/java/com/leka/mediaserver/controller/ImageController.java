@@ -3,6 +3,8 @@ package com.leka.mediaserver.controller;
 import com.leka.mediaserver.entity.dto.ImageDtoResponse;
 import com.leka.mediaserver.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,20 +34,27 @@ public class ImageController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ImageDtoResponse getImage(@PathVariable("id") Long id){
-        return imageService.getImage(id);
+    public ImageDtoResponse getImage(@PathVariable("id") Long id,
+                                     @RequestParam(name = "data", required = false) Boolean withData) {
+        return imageService.getImage(id, withData);
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteImage(@PathVariable(name = "id", required = false) Long id){
+    public void deleteImage(@PathVariable(name = "id", required = false) Long id) {
         imageService.delete(id);
     }
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ImageDtoResponse updateImage(@PathVariable(name = "id", required = false) Long id,
-                                        @RequestParam("file") MultipartFile file){
+                                        @RequestParam("file") MultipartFile file) {
         return imageService.updateImage(id, file);
+    }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ImageDtoResponse> getAllImages(Pageable pageable) {
+        return imageService.getAllImages(pageable);
     }
 }
