@@ -15,6 +15,8 @@
     <description>mediaserver</description>
     <properties>
         <java.version>17</java.version>
+        <spring-cloud.version>2022.0.1</spring-cloud.version>
+        <eurika.version>4.0.3</eurika.version>
     </properties>
     <dependencies>
         <dependency>
@@ -48,7 +50,17 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${eurika.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,7 +68,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.0.1</version>
                 <configuration>
                     <excludes>
                         <exclude>
