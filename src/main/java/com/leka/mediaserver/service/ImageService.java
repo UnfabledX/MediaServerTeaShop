@@ -16,4 +16,7 @@ public interface ImageService {
     ImageDtoResponse updateImage(Long id, MultipartFile file);
 
     Page<ImageDtoResponse> getAllImages(Pageable pageable);
+
+    void deleteAllImages();
+
 }

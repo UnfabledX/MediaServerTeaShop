@@ -64,6 +64,11 @@ public class ImageServiceImpl implements ImageService {
         return images.map(imageMapper::convertImageToImageDtoWithData);
     }
 
+    @Override
+    public void deleteAllImages() {
+        imageRepository.deleteAll();
+    }
+
 
     private ImageDtoResponse saveImageAndGetDtoResponse(MultipartFile file, Image image) {
         try {

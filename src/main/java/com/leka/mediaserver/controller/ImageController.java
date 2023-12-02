@@ -57,4 +57,10 @@ public class ImageController {
     public Page<ImageDtoResponse> getAllImages(Pageable pageable) {
         return imageService.getAllImages(pageable);
     }
+
+    @DeleteMapping("/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllImages() {
+        imageService.deleteAllImages();
+    }
 }
