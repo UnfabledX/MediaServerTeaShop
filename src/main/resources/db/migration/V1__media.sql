@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS media_teashop_db;
+CREATE SCHEMA IF NOT EXISTS media_service;
 
-CREATE TABLE IF NOT EXISTS media_teashop_db.images
+CREATE TABLE IF NOT EXISTS media_service.images
 (
     id                bigserial,
     file_name         character varying NOT NULL,
@@ -11,5 +11,4 @@ CREATE TABLE IF NOT EXISTS media_teashop_db.images
     data              bytea             NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (file_name, file_type)
-
 );

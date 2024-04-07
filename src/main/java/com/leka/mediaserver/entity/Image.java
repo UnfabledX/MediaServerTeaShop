@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Entity
-@Table(name = "images", schema = "media_teashop_db")
+@Table(name = "images", schema = "media_service")
 @EntityListeners(AuditingEntityListener.class)
 public class Image {
     @Id
