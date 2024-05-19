@@ -23,11 +23,17 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageDtoResponse save(MultipartFile file) {
-        Image image = Image.builder()
-                .fileName(file.getOriginalFilename())
-                .fileType(file.getContentType())
-                .size(file.getSize()).build();
-        return saveImageAndGetDtoResponse(file, image);
+        String originalFilename = file.getOriginalFilename();
+        if (imageRepository.existsByFileName(originalFilename)) {
+            Image image = imageRepository.findByFileName(originalFilename);
+            return imageMapper.convertImageToImageDtoWithoutData(image);
+        } else {
+            Image image = Image.builder()
+                    .fileName(originalFilename)
+                    .fileType(file.getContentType())
+                    .size(file.getSize()).build();
+            return saveImageAndGetDtoResponse(file, image);
+        }
     }
 
     @Override
