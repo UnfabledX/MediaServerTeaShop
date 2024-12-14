@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk-alpine AS builder
-ARG JAR_FILE=target/mediaserver-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=target/mediaserver-0.0.2.jar
 COPY ${JAR_FILE} app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
